@@ -42,7 +42,6 @@ app.get('/balance', async (req: Request, res: Response) => {
     }
 });
 
-// === START SERVER ===
 app.listen(PORT, () => {
     const serverIP = getServerIP();
     console.log(`🚀 Proxy server running at http://localhost:${PORT}`);
