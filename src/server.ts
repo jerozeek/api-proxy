@@ -1,7 +1,9 @@
+
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { cNGNManager } from 'cngn-typescript-library';
 import { config } from "dotenv";
+import os from 'os'; // Add this import
 
 config({ quiet: true });
 
@@ -17,6 +19,19 @@ const privateKey = process.env.PRIVATE_KEY!
 
 const cNGNManager1 = new cNGNManager({ apiKey, encryptionKey, privateKey })
 
+// Function to get server IP address
+function getServerIP(): string {
+    const interfaces = os.networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        for (const int of interfaces[name]!) {
+            if (int.family === 'IPv4' && !int.internal) {
+                return int.address;
+            }
+        }
+    }
+    return 'localhost';
+}
+
 app.get('/balance', async (req: Request, res: Response) => {
     try {
         const response = await cNGNManager1.getBalance();
@@ -29,5 +44,8 @@ app.get('/balance', async (req: Request, res: Response) => {
 
 // === START SERVER ===
 app.listen(PORT, () => {
+    const serverIP = getServerIP();
     console.log(`🚀 Proxy server running at http://localhost:${PORT}`);
+    console.log(`🌐 Server IP address: ${serverIP}`);
+    console.log(`🔗 External access: http://${serverIP}:${PORT}`);
 });
