@@ -1,9 +1,8 @@
-
-import express, { Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
-import { cNGNManager } from 'cngn-typescript-library';
-import { config } from "dotenv";
-import os from 'os'; // Add this import
+import {cNGNManager} from 'cngn-typescript-library';
+import {config} from "dotenv";
+import os from 'os';
 
 config({ quiet: true });
 
@@ -32,15 +31,17 @@ function getServerIP(): string {
     return 'localhost';
 }
 
-app.get('/balance', async (req: Request, res: Response) => {
+async function directCall() {
     try {
-        const response = await cNGNManager1.getBalance();
-        res.json(response);
+        return await cNGNManager1.getBalance();
     }
     catch (error: any) {
-        res.status(500).json({ error: error.message });
+        console.error('Error in directCall:', error.message);
+        throw new Error('Failed to fetch balance');
     }
-});
+}
+
+directCall();
 
 app.listen(PORT, () => {
     const serverIP = getServerIP();
